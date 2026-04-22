@@ -1,0 +1,5 @@
+"""Entry point: `python -m invtool` or the installed `invtool` console script."""
+from invtool.main import main
+
+if __name__ == "__main__":
+    main()

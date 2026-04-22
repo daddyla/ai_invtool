@@ -1,0 +1,67 @@
+[project]
+name = "invtool"
+version = "1.0.0"
+description = "Rich CLI + AI Agent for stock analysis, options screening, earnings patterns, and portfolio tracking."
+requires-python = ">=3.11"
+authors = [{ name = "alexl" }]
+readme = "README.md"
+dependencies = [
+    "rich",
+    "questionary",
+    "pyyaml",
+    "claude-agent-sdk",
+    "anthropic",
+    "yfinance",
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "scipy",
+    "scikit-learn",
+    "lxml",
+    "feedparser",
+    "trafilatura",
+    "beautifulsoup4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pre-commit",
+    "types-pyyaml",
+]
+
+[project.scripts]
+invtool = "invtool.__main__:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["invtool*"]
+exclude = ["archive*", "tests*", "charts*", "logs*", "reports*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["archive"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.11"
+strict_optional = true
+ignore_missing_imports = true
+exclude = ["archive/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
