@@ -1,7 +1,19 @@
-# Secrets
+# Secrets & credentials
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+credentials.json
+secrets.json
+service_account.json
+*_credentials.json
+*_secrets.json
+*_key.json
 
 # Python
 __pycache__/
