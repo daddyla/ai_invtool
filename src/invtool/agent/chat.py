@@ -754,7 +754,7 @@ def check_api_key() -> bool:
 
 def _save_response(result_text: str):
     """Prompt user to save the last AI response to a file."""
-    from invtool.prompt import text as prompt_text
+    from invtool.ui.prompt import text as prompt_text
     from invtool.config import REPORTS_DIR
     from datetime import datetime
 
@@ -819,7 +819,7 @@ def ai_chat_loop(data_provider):
         border_style="blue",
     ))
 
-    from invtool.prompt import text as prompt_text
+    from invtool.ui.prompt import text as prompt_text
 
     last_result = None
 

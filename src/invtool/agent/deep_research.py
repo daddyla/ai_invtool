@@ -528,7 +528,7 @@ def _run_deep_research(client, system_prompt: str, user_query: str,
 
 def _save_report(result_text: str, default_name: str = "") -> str:
     """Prompt user to save research result to a file. Returns path or None."""
-    from invtool.prompt import text as prompt_text, confirm
+    from invtool.ui.prompt import text as prompt_text, confirm
     from invtool.config import REPORTS_DIR
 
     if not confirm("Save report to file?", default=True):
@@ -599,7 +599,7 @@ def run_skill(client, skill_key: str, inputs: dict, log: ResearchLog = None) -> 
 
 def deep_research_chat(client, log: ResearchLog = None) -> str:
     """Free-form deep research (single query)."""
-    from invtool.prompt import text as prompt_text
+    from invtool.ui.prompt import text as prompt_text
 
     user_query = prompt_text("Research query:")
     if not user_query or user_query.strip().lower() in ("back", "quit", "exit", "q"):
@@ -637,7 +637,7 @@ def deep_research_menu(data_provider):
     set_data_provider(data_provider)
     client = anthropic.Anthropic()
 
-    from invtool.prompt import select, text as prompt_text
+    from invtool.ui.prompt import select, text as prompt_text
 
     while True:
         # Build skill choices

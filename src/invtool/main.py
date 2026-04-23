@@ -9,12 +9,12 @@ from rich.table import Table
 from rich import box
 
 from invtool.config.data_provider import DataProvider
-from invtool.display import (
+from invtool.ui.display import (
     console, print_header, print_stock_summary, print_technicals_table,
     print_options_table, print_portfolio_table, print_earnings_table,
     show_chart_path,
 )
-from invtool.prompt import select, text, confirm
+from invtool.ui.prompt import select, text, confirm
 
 BANNER = """[bold blue]
  ___                     _                        _
@@ -102,7 +102,7 @@ class InvestmentDashboard:
         print_technicals_table(t)
 
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_technical
+            from invtool.ui.charts import chart_technical
             path = chart_technical(t)
             show_chart_path(path)
 
@@ -127,7 +127,7 @@ class InvestmentDashboard:
             print_options_table(df, f"{ticker} — Sell Put Candidates")
             if not df.empty and confirm("Generate chart?", default=True):
                 from invtool.analysis.technical import full_technical_analysis
-                from invtool.charts import chart_technical
+                from invtool.ui.charts import chart_technical
                 t = full_technical_analysis(ticker, self.data)
                 if "error" not in t:
                     path = chart_technical(t, df)
@@ -204,7 +204,7 @@ class InvestmentDashboard:
             console.print(table)
 
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_earnings_behavior
+            from invtool.ui.charts import chart_earnings_behavior
             path = chart_earnings_behavior(result["earnings_df"], ticker)
             show_chart_path(path)
 
@@ -229,7 +229,7 @@ class InvestmentDashboard:
             print_portfolio_table(s["positions"])
 
             if confirm("Generate charts?", default=True):
-                from invtool.charts import chart_portfolio_pnl, chart_portfolio_allocation
+                from invtool.ui.charts import chart_portfolio_pnl, chart_portfolio_allocation
                 p1 = chart_portfolio_pnl(s["positions"])
                 p2 = chart_portfolio_allocation(s["positions"])
                 show_chart_path(p1)
@@ -313,7 +313,7 @@ class InvestmentDashboard:
 
         elif choice == "timeline":
             from invtool.analysis.portfolio import Portfolio
-            from invtool.charts import chart_recovery_timeline
+            from invtool.ui.charts import chart_recovery_timeline
             pf = Portfolio(self.data)
             s = pf.summary()
             if s["total_pnl"] >= 0:
@@ -471,11 +471,11 @@ class InvestmentDashboard:
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Analyzing {ticker} news sentiment...[/]")
         from invtool.ai.sentiment import analyze_sentiment
-        from invtool.display import print_sentiment_table
+        from invtool.ui.display import print_sentiment_table
         result = analyze_sentiment(ticker, self.data)
         print_sentiment_table(result)
         if result.get("headlines") and confirm("Generate chart?", default=True):
-            from invtool.charts import chart_sentiment
+            from invtool.ui.charts import chart_sentiment
             path = chart_sentiment(result)
             if path:
                 show_chart_path(path)
@@ -484,14 +484,14 @@ class InvestmentDashboard:
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Forecasting {ticker} price...[/]")
         from invtool.ai.forecast import price_forecast
-        from invtool.display import print_forecast_table
+        from invtool.ui.display import print_forecast_table
         result = price_forecast(ticker, self.data)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
             return
         print_forecast_table(result)
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_forecast
+            from invtool.ui.charts import chart_forecast
             path = chart_forecast(result)
             show_chart_path(path)
 
@@ -499,7 +499,7 @@ class InvestmentDashboard:
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Detecting {ticker} market regime...[/]")
         from invtool.ai.regime import detect_regime
-        from invtool.display import print_regime_panel
+        from invtool.ui.display import print_regime_panel
         result = detect_regime(ticker, self.data)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
@@ -515,7 +515,7 @@ class InvestmentDashboard:
         if choice == "back" or choice is None:
             return
 
-        from invtool.display import print_anomaly_table
+        from invtool.ui.display import print_anomaly_table
 
         if choice == "single":
             ticker = self._ask_ticker()
@@ -524,7 +524,7 @@ class InvestmentDashboard:
             result = detect_anomalies(ticker, self.data)
             print_anomaly_table(result)
             if result.get("anomalies") and confirm("Generate chart?", default=True):
-                from invtool.charts import chart_anomaly
+                from invtool.ui.charts import chart_anomaly
                 path = chart_anomaly(result)
                 if path:
                     show_chart_path(path)
@@ -545,14 +545,14 @@ class InvestmentDashboard:
     def _montecarlo(self):
         console.print("[dim]Running Monte Carlo simulation (10,000 paths)...[/]")
         from invtool.ai.montecarlo import monte_carlo_simulation
-        from invtool.display import print_montecarlo_table
+        from invtool.ui.display import print_montecarlo_table
         result = monte_carlo_simulation(self.data)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
             return
         print_montecarlo_table(result)
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_montecarlo
+            from invtool.ui.charts import chart_montecarlo
             # Show 30-day horizon by default (index 1 if exists)
             idx = 1 if len(result["horizons"]) > 1 else 0
             path = chart_montecarlo(result, idx)
@@ -562,7 +562,7 @@ class InvestmentDashboard:
         ticker = self._ask_ticker("NVDA")
         console.print(f"\n[dim]Predicting {ticker} earnings outcome...[/]")
         from invtool.ai.earnings_ml import predict_earnings
-        from invtool.display import print_earnings_prediction
+        from invtool.ui.display import print_earnings_prediction
         result = predict_earnings(ticker, self.data)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
@@ -584,14 +584,14 @@ class InvestmentDashboard:
 
         console.print(f"[dim]Optimizing portfolio of {len(tickers)} assets...[/]")
         from invtool.ai.optimizer import optimize_portfolio
-        from invtool.display import print_optimizer_table
+        from invtool.ui.display import print_optimizer_table
         result = optimize_portfolio(self.data, tickers, target)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
             return
         print_optimizer_table(result)
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_efficient_frontier
+            from invtool.ui.charts import chart_efficient_frontier
             path = chart_efficient_frontier(result)
             show_chart_path(path)
 
@@ -604,14 +604,14 @@ class InvestmentDashboard:
 
         console.print(f"[dim]Analyzing correlations for {len(tickers)} tickers...[/]")
         from invtool.ai.correlation import analyze_correlations
-        from invtool.display import print_correlation_table
+        from invtool.ui.display import print_correlation_table
         result = analyze_correlations(self.data, tickers)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
             return
         print_correlation_table(result)
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_correlation
+            from invtool.ui.charts import chart_correlation
             path = chart_correlation(result)
             show_chart_path(path)
 
@@ -654,7 +654,7 @@ class InvestmentDashboard:
             return
         console.print("[dim]Fetching earnings calendar...[/]")
         from invtool.market.intel import earnings_calendar
-        from invtool.display import print_earnings_calendar
+        from invtool.ui.display import print_earnings_calendar
         result = earnings_calendar(period)
         print_earnings_calendar(result)
 
@@ -668,18 +668,18 @@ class InvestmentDashboard:
             return
         console.print("[dim]Fetching market movers...[/]")
         from invtool.market.intel import market_movers
-        from invtool.display import print_market_movers
+        from invtool.ui.display import print_market_movers
         result = market_movers(category)
         print_market_movers(result)
 
     def _sectors(self):
         console.print("[dim]Fetching sector performance...[/]")
         from invtool.market.intel import sector_performance
-        from invtool.display import print_sector_performance
+        from invtool.ui.display import print_sector_performance
         result = sector_performance()
         print_sector_performance(result)
         if confirm("Generate chart?", default=True):
-            from invtool.charts import chart_sector_performance
+            from invtool.ui.charts import chart_sector_performance
             path = chart_sector_performance(result)
             if path:
                 show_chart_path(path)
@@ -688,7 +688,7 @@ class InvestmentDashboard:
         ticker = self._ask_ticker()
         console.print(f"[dim]Fetching {ticker} analyst ratings...[/]")
         from invtool.market.intel import analyst_ratings
-        from invtool.display import print_analyst_ratings
+        from invtool.ui.display import print_analyst_ratings
         result = analyst_ratings(ticker)
         print_analyst_ratings(result)
 
@@ -696,14 +696,14 @@ class InvestmentDashboard:
         ticker = self._ask_ticker()
         console.print(f"[dim]Fetching {ticker} insider activity...[/]")
         from invtool.market.intel import insider_activity
-        from invtool.display import print_insider_table
+        from invtool.ui.display import print_insider_table
         result = insider_activity(ticker)
         print_insider_table(result)
 
     def _economic(self):
         console.print("[dim]Fetching economic calendar...[/]")
         from invtool.market.intel import economic_calendar
-        from invtool.display import print_economic_calendar
+        from invtool.ui.display import print_economic_calendar
         result = economic_calendar()
         print_economic_calendar(result)
 
@@ -714,12 +714,12 @@ class InvestmentDashboard:
 
     # ── 12. Web News ──
     def _web_news_menu(self):
-        from invtool.prompt import select, text as prompt_text
+        from invtool.ui.prompt import select, text as prompt_text
         from invtool.market.webcrawler import (
             crawl_market_news, ticker_news_crawl,
             search_financial_news, fetch_article_content,
         )
-        from invtool.display import print_news_headlines, print_article_content
+        from invtool.ui.display import print_news_headlines, print_article_content
 
         choice = select("Web News", [
             ("Market Headlines (Reuters, CNBC, MarketWatch, Yahoo, Benzinga)", "headlines"),
