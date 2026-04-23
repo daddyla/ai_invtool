@@ -1,7 +1,7 @@
 """Market regime detection — classify regime and recommend strategies."""
 
 import numpy as np
-from invtool.technical import compute_indicators
+from invtool.analysis.technical import compute_indicators
 
 
 # Regime → strategy mapping

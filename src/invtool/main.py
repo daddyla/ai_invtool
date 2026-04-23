@@ -91,7 +91,7 @@ class InvestmentDashboard:
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Analyzing {ticker}...[/]")
 
-        from invtool.technical import full_technical_analysis
+        from invtool.analysis.technical import full_technical_analysis
         t = full_technical_analysis(ticker, self.data)
         if "error" in t:
             console.print(f"[red]{t['error']}[/]")
@@ -122,11 +122,11 @@ class InvestmentDashboard:
         console.print(f"\n[dim]Screening {ticker} options...[/]")
 
         if strategy == "put":
-            from invtool.options import screen_puts
+            from invtool.analysis.options import screen_puts
             df = screen_puts(ticker, self.data)
             print_options_table(df, f"{ticker} — Sell Put Candidates")
             if not df.empty and confirm("Generate chart?", default=True):
-                from invtool.technical import full_technical_analysis
+                from invtool.analysis.technical import full_technical_analysis
                 from invtool.charts import chart_technical
                 t = full_technical_analysis(ticker, self.data)
                 if "error" not in t:
@@ -134,13 +134,13 @@ class InvestmentDashboard:
                     show_chart_path(path)
 
         elif strategy == "call":
-            from invtool.options import screen_calls
+            from invtool.analysis.options import screen_calls
             cost = text("Cost basis per share (0 if none):", default="0")
             df = screen_calls(ticker, self.data, cost_basis=float(cost or 0))
             print_options_table(df, f"{ticker} — Covered Call Candidates")
 
         elif strategy == "wheel":
-            from invtool.options import wheel_analysis
+            from invtool.analysis.options import wheel_analysis
             shares = int(text("Shares owned:", default="0") or 0)
             cost = float(text("Cost basis/share:", default="0") or 0)
             result = wheel_analysis(ticker, self.data, shares, cost)
@@ -153,12 +153,12 @@ class InvestmentDashboard:
             ))
 
             if result.get("best_puts"):
-                from invtool.options import screen_puts
+                from invtool.analysis.options import screen_puts
                 df = screen_puts(ticker, self.data)
                 print_options_table(df, f"{ticker} — Best Puts to Sell")
 
             if result.get("best_calls") and result["can_wheel"]:
-                from invtool.options import screen_calls
+                from invtool.analysis.options import screen_calls
                 df = screen_calls(ticker, self.data, cost)
                 print_options_table(df, f"{ticker} — Best Calls to Sell")
 
@@ -172,7 +172,7 @@ class InvestmentDashboard:
         ticker = self._ask_ticker("NVDA")
         console.print(f"\n[dim]Analyzing {ticker} earnings history...[/]")
 
-        from invtool.earnings import full_earnings_analysis
+        from invtool.analysis.earnings import full_earnings_analysis
         result = full_earnings_analysis(ticker, self.data)
         if "error" in result:
             console.print(f"[red]{result['error']}[/]")
@@ -220,7 +220,7 @@ class InvestmentDashboard:
         if choice == "back" or choice is None:
             return
 
-        from invtool.portfolio import Portfolio
+        from invtool.analysis.portfolio import Portfolio
         pf = Portfolio(self.data)
 
         if choice == "pnl":
@@ -285,7 +285,7 @@ class InvestmentDashboard:
             return
 
         if choice == "tlh":
-            from invtool.portfolio import Portfolio
+            from invtool.analysis.portfolio import Portfolio
             pf = Portfolio(self.data)
             console.print("[dim]Scanning for tax-loss candidates...[/]")
             candidates = pf.tax_loss_candidates()
@@ -312,7 +312,7 @@ class InvestmentDashboard:
             self._options_menu()
 
         elif choice == "timeline":
-            from invtool.portfolio import Portfolio
+            from invtool.analysis.portfolio import Portfolio
             from invtool.charts import chart_recovery_timeline
             pf = Portfolio(self.data)
             s = pf.summary()
@@ -339,7 +339,7 @@ class InvestmentDashboard:
             return
 
         if choice == "wash":
-            from invtool.execution import wash_sale_calendar
+            from invtool.analysis.execution import wash_sale_calendar
             sells = text("Tickers sold (comma-separated):", default="FIG,DOCS,TMF,BLSH")
             date = text("Sell date (YYYY-MM-DD):", default="2026-02-20")
             tickers = [t.strip().upper() for t in sells.split(",")]
@@ -356,7 +356,7 @@ class InvestmentDashboard:
             console.print(table)
 
         elif choice == "div":
-            from invtool.execution import dividend_calendar
+            from invtool.analysis.execution import dividend_calendar
             tickers_input = text("Tickers to check (comma-separated):", default="JEPQ,JEPI,SPHD,SCHD,SVOL")
             tickers = [t.strip().upper() for t in tickers_input.split(",")]
             console.print("[dim]Fetching dividend data...[/]")
@@ -415,7 +415,7 @@ class InvestmentDashboard:
             shares = int(text("Shares:") or 0)
             cost = float(text("Cost basis per share:") or 0)
             htype = text("Type (e.g. ETF-Income):", default="")
-            from invtool.portfolio import Portfolio
+            from invtool.analysis.portfolio import Portfolio
             pf = Portfolio(self.data)
             pf.add_holding(ticker, shares, cost, htype)
             console.print(f"[green]Added {shares} {ticker} @ ${cost:.2f}[/]")
@@ -426,7 +426,7 @@ class InvestmentDashboard:
             tickers = [(h["ticker"], h["ticker"]) for h in holdings]
             ticker = select("Remove which ticker?", tickers)
             if ticker:
-                from invtool.portfolio import Portfolio
+                from invtool.analysis.portfolio import Portfolio
                 pf = Portfolio(self.data)
                 pf.remove_holding(ticker)
                 console.print(f"[yellow]Removed {ticker}[/]")

@@ -1,7 +1,7 @@
 """Earnings prediction — ML-based beat/miss and sell-the-news probability."""
 
 import numpy as np
-from invtool.earnings import get_earnings_dates, analyze_earnings_windows
+from invtool.analysis.earnings import get_earnings_dates, analyze_earnings_windows
 
 
 def predict_earnings(ticker: str, data_provider) -> dict:

@@ -387,12 +387,12 @@ def _handle_tool(name: str, args: dict) -> str:
         }
 
     elif name == "technical_analysis":
-        from invtool.technical import full_technical_analysis
+        from invtool.analysis.technical import full_technical_analysis
         t = full_technical_analysis(args["ticker"].upper(), dp)
         result = {k: v for k, v in t.items() if k != "df"}
 
     elif name == "screen_puts":
-        from invtool.options import screen_puts
+        from invtool.analysis.options import screen_puts
         df = screen_puts(args["ticker"].upper(), dp)
         if df.empty:
             return json.dumps(f"No put options found for {args['ticker']}")
@@ -409,7 +409,7 @@ def _handle_tool(name: str, args: dict) -> str:
         result = records
 
     elif name == "screen_calls":
-        from invtool.options import screen_calls
+        from invtool.analysis.options import screen_calls
         df = screen_calls(args["ticker"].upper(), dp, cost_basis=args.get("cost_basis"))
         if df.empty:
             return json.dumps(f"No call options found for {args['ticker']}")
@@ -426,7 +426,7 @@ def _handle_tool(name: str, args: dict) -> str:
         result = records
 
     elif name == "wheel_analysis":
-        from invtool.options import wheel_analysis
+        from invtool.analysis.options import wheel_analysis
         raw = wheel_analysis(
             args["ticker"].upper(), dp,
             shares=args.get("shares", 0),
@@ -443,7 +443,7 @@ def _handle_tool(name: str, args: dict) -> str:
                                   if k in ("expiration", "strike", "premium", "prob_otm", "annualized_return")}
 
     elif name == "earnings_analysis":
-        from invtool.earnings import full_earnings_analysis
+        from invtool.analysis.earnings import full_earnings_analysis
         raw = full_earnings_analysis(args["ticker"].upper(), dp)
         if "error" in raw:
             result = raw
@@ -457,7 +457,7 @@ def _handle_tool(name: str, args: dict) -> str:
                             r[k] = round(v, 4)
 
     elif name == "portfolio_summary":
-        from invtool.portfolio import Portfolio
+        from invtool.analysis.portfolio import Portfolio
         pf = Portfolio(dp)
         result = pf.summary()
         for p in result["positions"]:
@@ -466,12 +466,12 @@ def _handle_tool(name: str, args: dict) -> str:
                     p[k] = round(p[k], 2)
 
     elif name == "portfolio_strategies":
-        from invtool.portfolio import Portfolio
+        from invtool.analysis.portfolio import Portfolio
         pf = Portfolio(dp)
         result = pf.per_position_strategies()
 
     elif name == "tax_loss_candidates":
-        from invtool.portfolio import Portfolio
+        from invtool.analysis.portfolio import Portfolio
         pf = Portfolio(dp)
         result = pf.tax_loss_candidates()
 
@@ -481,28 +481,28 @@ def _handle_tool(name: str, args: dict) -> str:
         ticker = args.get("ticker", "").upper()
         tickers_str = args.get("tickers", "")
         if chart_type == "technical" and ticker:
-            from invtool.technical import full_technical_analysis
+            from invtool.analysis.technical import full_technical_analysis
             t = full_technical_analysis(ticker, dp)
             path = charts.chart_technical(t)
         elif chart_type == "portfolio_pnl":
-            from invtool.portfolio import Portfolio
+            from invtool.analysis.portfolio import Portfolio
             pf = Portfolio(dp)
             s = pf.summary()
             path = charts.chart_portfolio_pnl(s["positions"])
         elif chart_type == "portfolio_allocation":
-            from invtool.portfolio import Portfolio
+            from invtool.analysis.portfolio import Portfolio
             pf = Portfolio(dp)
             s = pf.summary()
             path = charts.chart_portfolio_allocation(s["positions"])
         elif chart_type == "earnings" and ticker:
-            from invtool.earnings import full_earnings_analysis
+            from invtool.analysis.earnings import full_earnings_analysis
             raw = full_earnings_analysis(ticker, dp)
             if "earnings_df" in raw:
                 path = charts.chart_earnings_behavior(raw["earnings_df"], ticker)
             else:
                 return json.dumps("No earnings data available")
         elif chart_type == "recovery":
-            from invtool.portfolio import Portfolio
+            from invtool.analysis.portfolio import Portfolio
             pf = Portfolio(dp)
             s = pf.summary()
             path = charts.chart_recovery_timeline(s["total_pnl"], 50)
