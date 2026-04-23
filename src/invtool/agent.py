@@ -533,7 +533,7 @@ def _handle_tool(name: str, args: dict) -> str:
             r = analyze_correlations(dp, tickers)
             path = charts.chart_correlation(r)
         elif chart_type == "sector_performance":
-            from invtool.market_intel import sector_performance
+            from invtool.market.intel import sector_performance
             r = sector_performance()
             path = charts.chart_sector_performance(r)
         else:
@@ -594,53 +594,53 @@ def _handle_tool(name: str, args: dict) -> str:
 
     # ── Market Intelligence Tool Handlers ──
     elif name == "earnings_calendar":
-        from invtool.market_intel import earnings_calendar
+        from invtool.market.intel import earnings_calendar
         result = earnings_calendar(args.get("date_range", "this_week"))
 
     elif name == "market_movers":
-        from invtool.market_intel import market_movers
+        from invtool.market.intel import market_movers
         result = market_movers(args.get("category", "day_gainers"))
 
     elif name == "sector_performance":
-        from invtool.market_intel import sector_performance
+        from invtool.market.intel import sector_performance
         result = sector_performance()
 
     elif name == "analyst_ratings":
-        from invtool.market_intel import analyst_ratings
+        from invtool.market.intel import analyst_ratings
         result = analyst_ratings(args["ticker"].upper())
 
     elif name == "insider_activity":
-        from invtool.market_intel import insider_activity
+        from invtool.market.intel import insider_activity
         result = insider_activity(args["ticker"].upper())
 
     elif name == "economic_calendar":
-        from invtool.market_intel import economic_calendar
+        from invtool.market.intel import economic_calendar
         result = economic_calendar()
 
     # ── Web Crawler Tool Handlers ──
     elif name == "crawl_market_news":
-        from invtool.webcrawler import crawl_market_news
+        from invtool.market.webcrawler import crawl_market_news
         sources_str = args.get("sources", "")
         sources = [s.strip() for s in sources_str.split(",")] if sources_str else None
         max_per = min(args.get("max_per_source", 8), 20)
         result = crawl_market_news(sources=sources, max_per_source=max_per)
 
     elif name == "ticker_news_crawl":
-        from invtool.webcrawler import ticker_news_crawl
+        from invtool.market.webcrawler import ticker_news_crawl
         result = ticker_news_crawl(
             args["ticker"].upper(),
             max_results=args.get("max_results", 15),
         )
 
     elif name == "search_financial_news":
-        from invtool.webcrawler import search_financial_news
+        from invtool.market.webcrawler import search_financial_news
         result = search_financial_news(
             args["query"],
             max_results=args.get("max_results", 15),
         )
 
     elif name == "fetch_article_content":
-        from invtool.webcrawler import fetch_article_content
+        from invtool.market.webcrawler import fetch_article_content
         result = fetch_article_content(args["url"])
 
     else:

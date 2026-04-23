@@ -653,7 +653,7 @@ class InvestmentDashboard:
         if period is None:
             return
         console.print("[dim]Fetching earnings calendar...[/]")
-        from invtool.market_intel import earnings_calendar
+        from invtool.market.intel import earnings_calendar
         from invtool.display import print_earnings_calendar
         result = earnings_calendar(period)
         print_earnings_calendar(result)
@@ -667,14 +667,14 @@ class InvestmentDashboard:
         if category is None:
             return
         console.print("[dim]Fetching market movers...[/]")
-        from invtool.market_intel import market_movers
+        from invtool.market.intel import market_movers
         from invtool.display import print_market_movers
         result = market_movers(category)
         print_market_movers(result)
 
     def _sectors(self):
         console.print("[dim]Fetching sector performance...[/]")
-        from invtool.market_intel import sector_performance
+        from invtool.market.intel import sector_performance
         from invtool.display import print_sector_performance
         result = sector_performance()
         print_sector_performance(result)
@@ -687,7 +687,7 @@ class InvestmentDashboard:
     def _analyst(self):
         ticker = self._ask_ticker()
         console.print(f"[dim]Fetching {ticker} analyst ratings...[/]")
-        from invtool.market_intel import analyst_ratings
+        from invtool.market.intel import analyst_ratings
         from invtool.display import print_analyst_ratings
         result = analyst_ratings(ticker)
         print_analyst_ratings(result)
@@ -695,14 +695,14 @@ class InvestmentDashboard:
     def _insider(self):
         ticker = self._ask_ticker()
         console.print(f"[dim]Fetching {ticker} insider activity...[/]")
-        from invtool.market_intel import insider_activity
+        from invtool.market.intel import insider_activity
         from invtool.display import print_insider_table
         result = insider_activity(ticker)
         print_insider_table(result)
 
     def _economic(self):
         console.print("[dim]Fetching economic calendar...[/]")
-        from invtool.market_intel import economic_calendar
+        from invtool.market.intel import economic_calendar
         from invtool.display import print_economic_calendar
         result = economic_calendar()
         print_economic_calendar(result)
@@ -715,7 +715,7 @@ class InvestmentDashboard:
     # ── 12. Web News ──
     def _web_news_menu(self):
         from invtool.prompt import select, text as prompt_text
-        from invtool.webcrawler import (
+        from invtool.market.webcrawler import (
             crawl_market_news, ticker_news_crawl,
             search_financial_news, fetch_article_content,
         )
