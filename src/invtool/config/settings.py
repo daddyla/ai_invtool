@@ -12,7 +12,8 @@ MAX_DTE = 90
 TARGET_DELTA = -0.25
 
 # ── Paths ──
-BASE_DIR = Path(__file__).resolve().parent.parent
+# __file__: src/invtool/config/settings.py  → parents[3] is the repo root
+BASE_DIR = Path(__file__).resolve().parents[3]
 CHART_DIR = BASE_DIR / "charts"
 RESEARCH_LOG_DIR = BASE_DIR / "logs"
 REPORTS_DIR = BASE_DIR / "reports"

@@ -34,7 +34,7 @@ def set_data_provider(dp):
 def _ensure_provider():
     global _data_provider
     if _data_provider is None:
-        from invtool.data import DataProvider
+        from invtool.config.data_provider import DataProvider
         _data_provider = DataProvider()
     return _data_provider
 

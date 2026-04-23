@@ -8,7 +8,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich import box
 
-from invtool.data import DataProvider
+from invtool.config.data_provider import DataProvider
 from invtool.display import (
     console, print_header, print_stock_summary, print_technicals_table,
     print_options_table, print_portfolio_table, print_earnings_table,
