@@ -40,9 +40,8 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["invtool*"]
-exclude = ["archive*", "tests*", "charts*", "logs*", "reports*"]
 
 [tool.ruff]
 line-length = 100
