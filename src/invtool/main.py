@@ -709,7 +709,7 @@ class InvestmentDashboard:
 
     # ── 11. Deep Research ──
     def _deep_research_menu(self):
-        from invtool.deep_research import deep_research_menu
+        from invtool.agent.deep_research import deep_research_menu
         deep_research_menu(self.data)
 
     # ── 12. Web News ──
