@@ -507,29 +507,29 @@ def _handle_tool(name: str, args: dict) -> str:
             s = pf.summary()
             path = charts.chart_recovery_timeline(s["total_pnl"], 50)
         elif chart_type == "sentiment" and ticker:
-            from invtool.sentiment import analyze_sentiment
+            from invtool.ai.sentiment import analyze_sentiment
             r = analyze_sentiment(ticker, dp)
             path = charts.chart_sentiment(r)
         elif chart_type == "forecast" and ticker:
-            from invtool.forecast import price_forecast
+            from invtool.ai.forecast import price_forecast
             r = price_forecast(ticker, dp)
             path = charts.chart_forecast(r)
         elif chart_type == "anomaly" and ticker:
-            from invtool.anomaly import detect_anomalies
+            from invtool.ai.anomaly import detect_anomalies
             r = detect_anomalies(ticker, dp)
             path = charts.chart_anomaly(r)
         elif chart_type == "montecarlo":
-            from invtool.montecarlo import monte_carlo_simulation
+            from invtool.ai.montecarlo import monte_carlo_simulation
             r = monte_carlo_simulation(dp)
             path = charts.chart_montecarlo(r, 1 if len(r["horizons"]) > 1 else 0)
         elif chart_type == "frontier":
             tickers = [t.strip() for t in tickers_str.split(",")] if tickers_str else ["NVDA", "AAPL", "MSFT"]
-            from invtool.optimizer import optimize_portfolio
+            from invtool.ai.optimizer import optimize_portfolio
             r = optimize_portfolio(dp, tickers)
             path = charts.chart_efficient_frontier(r)
         elif chart_type == "correlation":
             tickers = [t.strip() for t in tickers_str.split(",")] if tickers_str else ["NVDA", "AAPL", "MSFT"]
-            from invtool.correlation import analyze_correlations
+            from invtool.ai.correlation import analyze_correlations
             r = analyze_correlations(dp, tickers)
             path = charts.chart_correlation(r)
         elif chart_type == "sector_performance":
@@ -542,31 +542,31 @@ def _handle_tool(name: str, args: dict) -> str:
 
     # ── AI Analytics Tool Handlers ──
     elif name == "sentiment_analysis":
-        from invtool.sentiment import analyze_sentiment
+        from invtool.ai.sentiment import analyze_sentiment
         result = analyze_sentiment(args["ticker"].upper(), dp)
 
     elif name == "price_forecast":
-        from invtool.forecast import price_forecast
+        from invtool.ai.forecast import price_forecast
         raw = price_forecast(args["ticker"].upper(), dp)
         result = {k: v for k, v in raw.items() if k not in ("hist_df", "proj_df")}
 
     elif name == "market_regime":
-        from invtool.regime import detect_regime
+        from invtool.ai.regime import detect_regime
         result = detect_regime(args["ticker"].upper(), dp)
 
     elif name == "detect_anomalies":
         ticker = args.get("ticker", "").upper()
         if ticker:
-            from invtool.anomaly import detect_anomalies as _detect
+            from invtool.ai.anomaly import detect_anomalies as _detect
             raw = _detect(ticker, dp)
             result = {k: v for k, v in raw.items() if k != "df"}
         else:
-            from invtool.anomaly import scan_portfolio_anomalies
+            from invtool.ai.anomaly import scan_portfolio_anomalies
             from invtool.config import load_portfolio
             result = scan_portfolio_anomalies(dp, load_portfolio())
 
     elif name == "monte_carlo_risk":
-        from invtool.montecarlo import monte_carlo_simulation
+        from invtool.ai.montecarlo import monte_carlo_simulation
         raw = monte_carlo_simulation(dp)
         if "error" in raw:
             result = raw
@@ -577,17 +577,17 @@ def _handle_tool(name: str, args: dict) -> str:
                 h.pop("simulations", None)
 
     elif name == "predict_earnings":
-        from invtool.earnings_ml import predict_earnings
+        from invtool.ai.earnings_ml import predict_earnings
         result = predict_earnings(args["ticker"].upper(), dp)
 
     elif name == "optimize_portfolio":
-        from invtool.optimizer import optimize_portfolio
+        from invtool.ai.optimizer import optimize_portfolio
         tickers = [t.strip().upper() for t in args["tickers"].split(",")]
         target = args.get("target", "sharpe")
         result = optimize_portfolio(dp, tickers, target)
 
     elif name == "correlation_analysis":
-        from invtool.correlation import analyze_correlations
+        from invtool.ai.correlation import analyze_correlations
         tickers = [t.strip().upper() for t in args["tickers"].split(",")]
         raw = analyze_correlations(dp, tickers)
         result = {k: v for k, v in raw.items() if k != "corr_matrix_list"}

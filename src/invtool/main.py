@@ -470,7 +470,7 @@ class InvestmentDashboard:
     def _sentiment(self):
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Analyzing {ticker} news sentiment...[/]")
-        from invtool.sentiment import analyze_sentiment
+        from invtool.ai.sentiment import analyze_sentiment
         from invtool.display import print_sentiment_table
         result = analyze_sentiment(ticker, self.data)
         print_sentiment_table(result)
@@ -483,7 +483,7 @@ class InvestmentDashboard:
     def _forecast(self):
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Forecasting {ticker} price...[/]")
-        from invtool.forecast import price_forecast
+        from invtool.ai.forecast import price_forecast
         from invtool.display import print_forecast_table
         result = price_forecast(ticker, self.data)
         if "error" in result:
@@ -498,7 +498,7 @@ class InvestmentDashboard:
     def _regime(self):
         ticker = self._ask_ticker()
         console.print(f"\n[dim]Detecting {ticker} market regime...[/]")
-        from invtool.regime import detect_regime
+        from invtool.ai.regime import detect_regime
         from invtool.display import print_regime_panel
         result = detect_regime(ticker, self.data)
         if "error" in result:
@@ -520,7 +520,7 @@ class InvestmentDashboard:
         if choice == "single":
             ticker = self._ask_ticker()
             console.print(f"\n[dim]Scanning {ticker} for anomalies...[/]")
-            from invtool.anomaly import detect_anomalies
+            from invtool.ai.anomaly import detect_anomalies
             result = detect_anomalies(ticker, self.data)
             print_anomaly_table(result)
             if result.get("anomalies") and confirm("Generate chart?", default=True):
@@ -529,7 +529,7 @@ class InvestmentDashboard:
                 if path:
                     show_chart_path(path)
         else:
-            from invtool.anomaly import scan_portfolio_anomalies
+            from invtool.ai.anomaly import scan_portfolio_anomalies
             from invtool.config import load_portfolio
             console.print("[dim]Scanning all holdings for anomalies...[/]")
             holdings = load_portfolio()
@@ -544,7 +544,7 @@ class InvestmentDashboard:
 
     def _montecarlo(self):
         console.print("[dim]Running Monte Carlo simulation (10,000 paths)...[/]")
-        from invtool.montecarlo import monte_carlo_simulation
+        from invtool.ai.montecarlo import monte_carlo_simulation
         from invtool.display import print_montecarlo_table
         result = monte_carlo_simulation(self.data)
         if "error" in result:
@@ -561,7 +561,7 @@ class InvestmentDashboard:
     def _earnings_ml(self):
         ticker = self._ask_ticker("NVDA")
         console.print(f"\n[dim]Predicting {ticker} earnings outcome...[/]")
-        from invtool.earnings_ml import predict_earnings
+        from invtool.ai.earnings_ml import predict_earnings
         from invtool.display import print_earnings_prediction
         result = predict_earnings(ticker, self.data)
         if "error" in result:
@@ -583,7 +583,7 @@ class InvestmentDashboard:
             return
 
         console.print(f"[dim]Optimizing portfolio of {len(tickers)} assets...[/]")
-        from invtool.optimizer import optimize_portfolio
+        from invtool.ai.optimizer import optimize_portfolio
         from invtool.display import print_optimizer_table
         result = optimize_portfolio(self.data, tickers, target)
         if "error" in result:
@@ -603,7 +603,7 @@ class InvestmentDashboard:
         tickers = [t.strip().upper() for t in tickers_input.split(",")]
 
         console.print(f"[dim]Analyzing correlations for {len(tickers)} tickers...[/]")
-        from invtool.correlation import analyze_correlations
+        from invtool.ai.correlation import analyze_correlations
         from invtool.display import print_correlation_table
         result = analyze_correlations(self.data, tickers)
         if "error" in result:
