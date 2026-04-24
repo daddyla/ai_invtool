@@ -33,7 +33,7 @@ dev = [
 ]
 
 [project.scripts]
-invtool = "invtool.__main__:main"
+invtool = "invtool.cli.app:main"
 
 [build-system]
 requires = ["setuptools>=68"]
